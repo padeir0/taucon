@@ -1,0 +1,50 @@
+f(0, 0) = 0
+f(0, 1) = 1
+	a
+f(1, 0) = 0
+f(1, 1) = 1*4 + 1 = 5
+	a <op> a
+	~a
+f(1, 2) = 2*4 = 8
+	a <op> b
+	b <op> a
+f(2, 0) = 0
+f(2, 1) = 1 + 3 * 4 + 2 * (4^2) = 45
+	(a <op> a) <op> a
+	a <op> (a <op> a)
+	~(a <op> a)
+	~a <op> a
+	a <op> ~a
+	~~a
+f(2, 2) = 6 * 4 + 12 * (4^2) = 216
+	(a <op> b) <op> b
+	(b <op> a) <op> b
+	(b <op> b) <op> a
+	(b <op> a) <op> a
+	(a <op> b) <op> a
+	(a <op> a) <op> b
+	a <op> (b <op> b)
+	b <op> (a <op> b)
+	b <op> (b <op> a)
+	b <op> (a <op> a)
+	a <op> (b <op> a)
+	a <op> (a <op> b)
+	~(a <op> b)
+	~(b <op> a)
+	a <op> ~b
+	b <op> ~a
+	~a <op> b
+	~b <op> a
+f(2, 3) = 12 * (4^2) = 192
+	(a <op> b) <op> c
+	(b <op> a) <op> c
+	(c <op> b) <op> a
+	(b <op> c) <op> a
+	(a <op> c) <op> b
+	(c <op> a) <op> b
+	a <op> (b <op> c)
+	b <op> (a <op> c)
+	c <op> (b <op> a)
+	b <op> (c <op> a)
+	a <op> (c <op> b)
+	c <op> (a <op> b)
