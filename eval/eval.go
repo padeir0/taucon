@@ -18,6 +18,17 @@ func (this Result) String() string {
 	}
 	return "?"
 }
+func (this Result) Pretty() string {
+	switch this {
+	case True:
+		return "V"
+	case False:
+		return "F"
+	case Inconstant:
+		return "z"
+	}
+	return "?"
+}
 
 const (
 	Inconstant Result = iota

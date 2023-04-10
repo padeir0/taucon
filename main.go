@@ -5,100 +5,11 @@ import (
 	"taucon/eval"
 	"taucon/generator"
 	"taucon/tree"
-	nk "taucon/tree/nodekind"
 )
 
 func main() {
-	printConst()
-}
-
-// a ∨ (b ∧ c)
-func TreeOne() *tree.Node {
-	a := &tree.Node{
-		Kind:  nk.Variable,
-		Value: 0,
-	}
-	b := &tree.Node{
-		Kind:  nk.Variable,
-		Value: 1,
-	}
-	c := &tree.Node{
-		Kind:  nk.Variable,
-		Value: 2,
-	}
-	and := &tree.Node{
-		Kind:  nk.BinaryOperator,
-		Value: tree.AND,
-		Left:  b,
-		Right: c,
-	}
-	or := &tree.Node{
-		Kind:  nk.BinaryOperator,
-		Value: tree.OR,
-		Left:  a,
-		Right: and,
-	}
-	return or
-}
-
-// a ∨ ~a
-func TreeTwo() *tree.Node {
-	a := &tree.Node{
-		Kind:  nk.Variable,
-		Value: 0,
-	}
-	not := &tree.Node{
-		Kind:  nk.UnaryOperator,
-		Value: tree.NOT,
-		Left:  a,
-	}
-	or := &tree.Node{
-		Kind:  nk.BinaryOperator,
-		Value: tree.OR,
-		Left:  a,
-		Right: not,
-	}
-	return or
-}
-
-// a ∧ ~a
-func TreeThree() *tree.Node {
-	a := &tree.Node{
-		Kind:  nk.Variable,
-		Value: 0,
-	}
-	not := &tree.Node{
-		Kind:  nk.UnaryOperator,
-		Value: tree.NOT,
-		Left:  a,
-	}
-	and := &tree.Node{
-		Kind:  nk.BinaryOperator,
-		Value: tree.AND,
-		Left:  a,
-		Right: not,
-	}
-	return and
-}
-
-func test() {
-	fmt.Println("--------------------")
-	expr := TreeOne()
-	fmt.Println(expr)
-	fmt.Println(eval.TruthTableOf(expr))
-	fmt.Println(eval.ConstValue(expr))
-
-	fmt.Println("--------------------")
-	expr = TreeTwo()
-	fmt.Println(expr)
-	fmt.Println(eval.TruthTableOf(expr))
-	fmt.Println(eval.ConstValue(expr))
-
-	fmt.Println("--------------------")
-	expr = TreeThree()
-	fmt.Println(expr)
-	fmt.Println(eval.TruthTableOf(expr))
-	fmt.Println(eval.ConstValue(expr))
+	//countConst()
+	PrintConst()
 }
 
 func gentest() {
@@ -118,38 +29,50 @@ func gentest() {
 	}
 }
 
-type ConstTree struct {
-	Expr   *tree.Node
-	Result bool
-}
-
-func (this ConstTree) String() string {
-	res := "F"
-	if this.Result {
-		res = "T"
+func countConst() {
+	fmt.Println("f(i, j) where i = number of operators, j = number of variables")
+	for i := 0; i <= 4; i++ {
+		for j := 0; j <= 4; j++ {
+			F(i, j)
+		}
 	}
-	return this.Expr.String() + " = " + res
 }
 
-func printConst() {
-	taucon := []ConstTree{}
-	trees := generator.Generate(3, 2)
+func F(i, j int) {
+	tau := []*tree.Node{}
+	con := []*tree.Node{}
+	inconst := []*tree.Node{}
+	trees := generator.Generate(i, j)
 	for _, t := range trees {
 		res := eval.ConstValue(t)
 		switch res {
 		case eval.True:
-			taucon = append(taucon, ConstTree{
-				Expr:   t,
-				Result: true,
-			})
+			tau = append(tau, t)
 		case eval.False:
-			taucon = append(taucon, ConstTree{
-				Expr:   t,
-				Result: false,
-			})
+			con = append(con, t)
+		default:
+			inconst = append(inconst, t)
 		}
 	}
-	for _, ct := range taucon {
-		fmt.Println(ct)
+	fmt.Printf("f(%v, %v) = (inconst: %v, const: %v, con: %v, tau: %v)\n", i, j, len(inconst), len(tau)+len(con), len(con), len(tau))
+}
+
+func PrintConst() {
+	for i := 0; i <= 4; i++ {
+		for j := 0; j <= 4; j++ {
+			printTrees(i, j)
+		}
+	}
+}
+
+func printTrees(i, j int) {
+	fmt.Printf("f(%v, %v)-------------------------------\n", i, j)
+	trees := generator.Generate(i, j)
+	for _, t := range trees {
+		res := eval.ConstValue(t)
+		switch res {
+		case eval.True, eval.False:
+			fmt.Println(t, " <=> ", res.Pretty())
+		}
 	}
 }
