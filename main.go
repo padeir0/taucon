@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"taucon/eval"
 	"taucon/generator"
+	"taucon/maptree"
 	"taucon/tree"
+	"time"
 )
 
 func main() {
 	//countConst()
-	PrintConst()
+	printEquivalent()
+	//PrintConst()
 }
 
 func gentest() {
@@ -38,11 +41,23 @@ func countConst() {
 	}
 }
 
+func printEquivalent() {
+	mp := maptree.NewMapTree(3)
+	for _, group := range mp {
+		fmt.Println("-----------------------------------")
+		for _, t := range group {
+			fmt.Println(t)
+		}
+	}
+}
+
 func F(i, j int) {
 	tau := []*tree.Node{}
 	con := []*tree.Node{}
 	inconst := []*tree.Node{}
+	start := time.Now()
 	trees := generator.Generate(i, j)
+	duration := time.Since(start)
 	for _, t := range trees {
 		res := eval.ConstValue(t)
 		switch res {
@@ -54,7 +69,7 @@ func F(i, j int) {
 			inconst = append(inconst, t)
 		}
 	}
-	fmt.Printf("f(%v, %v) = (inconst: %v, const: %v, con: %v, tau: %v)\n", i, j, len(inconst), len(tau)+len(con), len(con), len(tau))
+	fmt.Printf("%v\t\tf(%v, %v) = (inconst: %v, const: %v, con: %v, tau: %v, total: %v)\n", duration, i, j, len(inconst), len(tau)+len(con), len(con), len(tau), len(tau)+len(con)+len(inconst))
 }
 
 func PrintConst() {

@@ -99,6 +99,40 @@ func (this *Node) Tree() string {
 	return prettyprint(this, 0)
 }
 
+func (this *Node) CountOperators() int {
+	if this == nil {
+		return 0
+	}
+
+	total := 0
+	if this.Kind == nk.BinaryOperator {
+		total = 1
+	}
+	return total + this.Left.CountOperators() + this.Right.CountOperators()
+}
+
+func (this *Node) Hash() int {
+	switch this.Kind {
+	case nk.BinaryOperator:
+		return this.Left.Hash() ^ this.Right.Hash()*(this.Value*31)
+	case nk.UnaryOperator:
+		return this.Left.Hash() * (this.Value * 31)
+	case nk.Variable, nk.Literal:
+		return this.Value
+	}
+	panic("unreachable")
+}
+
+func (this *Node) Equal(other *Node) bool {
+	if this == nil || other == nil {
+		return this == other // only valid if both are nils
+	}
+	if this.Kind == other.Kind && this.Value == other.Value {
+		return this.Left.Equal(other.Left) && this.Right.Equal(other.Right)
+	}
+	return false
+}
+
 func prettyprint(n *Node, i int) string {
 	if n == nil {
 		return "nil"
@@ -106,15 +140,11 @@ func prettyprint(n *Node, i int) string {
 	output := fmt.Sprintf("(%v, %v)", n.Kind, n.Value)
 	{
 		kid := n.Left
-		if kid != nil {
-			output += indent(i) + prettyprint(kid, i+1)
-		}
+		output += indent(i) + prettyprint(kid, i+1)
 	}
 	{
 		kid := n.Right
-		if kid != nil {
-			output += indent(i) + prettyprint(kid, i+1)
-		}
+		output += indent(i) + prettyprint(kid, i+1)
 	}
 
 	return output
@@ -131,9 +161,19 @@ func indent(n int) string {
 
 // Operators
 const (
-	AND int = iota
+	InvalidOperator int = iota
+	AND
 	OR
 	NOT
 	COND
 	BICOND
 )
+
+func EqualShape(a, b *Node) bool {
+	if a != nil && b != nil {
+		return EqualShape(a.Left, b.Left) && EqualShape(a.Right, b.Right)
+	} else if a == nil && b == nil { // both are nil
+		return true
+	}
+	return false
+}

@@ -112,6 +112,50 @@ func (this TruthTable) String() string {
 	return output
 }
 
+func FindEquivalent(trees []*tree.Node) map[string][]*tree.Node {
+	eq := map[string][]*tree.Node{}
+	for _, t := range trees {
+		res := ResultTableOf(t)
+		v, ok := eq[res]
+		if !ok {
+			eq[res] = []*tree.Node{t}
+		} else {
+			eq[res] = append(v, t)
+		}
+	}
+	// we keep only the equivalent ones, to save memory, odds are most are kept anyway
+	// because of commutativity and associativity
+	toRemove := []string{}
+	for k, v := range eq {
+		if len(v) < 1 {
+			toRemove = append(toRemove, k)
+		}
+	}
+	for _, rm := range toRemove {
+		delete(eq, rm)
+	}
+	return eq
+}
+
+func ResultTableOf(n *tree.Node) string {
+	numvars := findVars(n, 0)
+	output := ""
+	vars := make([]bool, numvars)
+	for i := 0; fillVariables(i, &vars); i++ {
+		t := eval(n, vars)
+		output += boolToS(t)
+	}
+	return output
+}
+
+func boolToS(b bool) string {
+	if b {
+		return "V"
+	} else {
+		return "F"
+	}
+}
+
 // returns the truth table
 func TruthTableOf(n *tree.Node) TruthTable {
 	numvars := findVars(n, 0)

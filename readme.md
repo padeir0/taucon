@@ -48,3 +48,6 @@ and contradictions (contradictions + tautologies)
 | `f(4, 2)` | 108566   | 33274 | 3740  |  29534  |
 | `f(4, 3)` | 557970   | 63150 | 2244  |  60906  |
 | `f(4, 4)` | 880776   | 33144 | 0     |  33144  |
+
+TODO: allow determination of equivalency between two propositions with
+different numbers of variables.
